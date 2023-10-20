@@ -5,6 +5,13 @@ import { deleteContact } from 'redux/contacts';
 export const ContactsList = () => {
   const dispatch = useDispatch();
   const contacts = useSelector(state => state.contacts.contacts);
+  const filter = useSelector(state => state.contacts.filter);
+
+  const getContactFromFilter = () => {
+    const filterContacts = contacts.filter(({ name }) =>
+      name.toLowerCase().includes(filter.toLowerCase())
+    );
+  };
 
   const handleDelete = contactId => {
     dispatch(deleteContact(contactId));
@@ -12,7 +19,7 @@ export const ContactsList = () => {
 
   return (
     <ul className={css.list}>
-      {contacts.map(contact => {
+      {getContactFromFilter().map(contact => {
         const { id, name, number } = contact;
         return (
           <li key={id}>
