@@ -1,19 +1,15 @@
-import { useState, useEffect } from 'react';
+import { Wrapper } from './Wrapper/Wrapper';
 import { ContactForm } from './ContactForm/ContactForm';
 import { ContactsList } from './ContactsList/ContactsList';
 import { Filter } from './Filter/Filter';
-import { Wrapper } from './Wrapper/Wrapper';
-import { LOCAL_STORAGE_KEY } from 'helpers/localStorageKey';
+
+import { deleteContact, setContacts, setFilter } from 'redux/contacts';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const App = () => {
-  const [contacts, setContacts] = useState(
-    () => JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) ?? []
-  );
-  const [filter, setFilter] = useState('');
-
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(contacts));
-  }, [contacts]);
+  const contacts = useSelector(state => state.contacts.contacts);
+  const filter = useSelector(state => state.contacts.filter);
+  const dispatch = useDispatch();
 
   const handleAddContact = userContacts => {
     if (
@@ -25,11 +21,11 @@ export const App = () => {
       alert(`${userContacts.name} is already in contacts`);
       return;
     }
-    setContacts([userContacts, ...contacts]);
+    dispatch(setContacts(userContacts));
   };
 
   const handleFilterChange = e => {
-    setFilter(e.target.value);
+    dispatch(setFilter(e.target.value));
   };
 
   const getContactFromFilter = () => {
@@ -40,9 +36,7 @@ export const App = () => {
   };
 
   const handleDelete = contactId => {
-    setContacts(prevState =>
-      prevState.filter(contact => contact.id !== contactId)
-    );
+    dispatch(deleteContact(contactId));
   };
 
   return (
